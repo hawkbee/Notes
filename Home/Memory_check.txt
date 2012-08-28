@@ -1,0 +1,43 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-08-22T10:30:21+08:00
+
+====== Memory check ======
+Created Wednesday 22 August 2012
+
+==== mtrace ====
+'''
+#include <mcheck.h>
+void mtrace(void);
+void muntrace(void);
+'''
+向内存分配函数（''malloc、realloc、memalign、free''）提供回调函数。
+使用环境变量''MALLOC_TRACE''记录存放的文件名。
+
+示例：
+'''
+#include <stdio.h>
+#include <mcheck.h>
+
+int main(int argc, char *argv[])
+{
+'''
+	'''
+	setenv("MALLOC_TRACE", "test.trace", 1);
+	mtrace()
+	
+	malloc(1);
+	return (0);
+	}
+	'''
+
+程序运行完成后，调用命令查看结果：
+''$ mtrace test.elf test.trace''
+
+==== dmalloc ====
+
+==== ccmalloc ====
+
+==== valgrind ====
+
+''$ valgrind --leak-check=yes test''

@@ -1,0 +1,14 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-08-27T11:22:38+08:00
+
+====== Signal ======
+Created Monday 27 August 2012
+
+''gulong g_signal_connect(gpointer object, const gchar *signal_name, GCallback handler, gpointer data);''
+
+destroy - 在Widget上调用gtk_widget_destroy时GTK+会产生这个信号，delete_event事件的回调函数返回false的时候也会产生这个信号。
+delete_event
+
+
+信号名称中的'-'与'_'是等价的。

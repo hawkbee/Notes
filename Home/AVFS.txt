@@ -1,0 +1,194 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+
+====== AVFS ======
+Created Monday 20 August 2012
+1. 如何使用
+2. 如何扩展
+extfs
+low-level C API（volatile模块是构建于这一层，volatile.c）
+helper library
+* filter - 作用于单个文件（ubzip2.c)
+* archive - (uar.c)
+* remote - 作用于ssh，rsh，ftp等（rsh.c)
+* state - 类proc文件系统（ftp.c）
+
+
+
+ventry - inode，可通过调用av_get_ventry获取ventry，包含在头文件internal.h。
+vfile - file，文件读写前必须打开，可以通过av_open获取vfile，包含在头文件oper.h。
+
+'''
+struct ventry {
+    void *data;
+    struct avmount *mnt;
+};
+
+struct vfile {
+    void *data;
+    struct avmount *mnt;
+    int flags;
+    int ptr;
+    avmutex lock;
+};
+'''
+
+avfs - 模块定义数据结构
+'''
+struct avfs {
+    /* private */
+    struct vmodule *module;
+    avmutex lock;
+    avino_t inoctr;
+
+    /* read-only: */
+    char *name;
+    struct ext_info *exts;
+    void *data;
+    int version;
+    int flags;
+    avdev_t dev;
+
+    void      (*destroy) (struct avfs *avfs);
+    
+    int       (*lookup)  (ventry *ve, const char *name, void **retp);
+    void      (*putent)  (ventry *ve);
+    int       (*copyent) (ventry *ve, void **retp);
+    int       (*getpath) (ventry *ve, char **retp);
+                         
+    int       (*access)  (ventry *ve, int amode);
+    int       (*readlink)(ventry *ve, char **bufp);
+    int       (*symlink) (const char *path, ventry *newve);
+    int       (*unlink)  (ventry *ve);
+    int       (*rmdir)   (ventry *ve);
+    int       (*mknod)   (ventry *ve, avmode_t mode, avdev_t dev);
+    int       (*mkdir)   (ventry *ve, avmode_t mode);
+    int       (*rename)  (ventry *ve, ventry *newve);
+    int       (*link)    (ventry *ve, ventry *newve);
+                         
+    int       (*open)    (ventry *ve, int flags, avmode_t mode, void **retp);
+    int       (*close)   (vfile *vf);
+    avssize_t (*read)    (vfile *vf, char *buf, avsize_t nbyte);
+    avssize_t (*write)   (vfile *vf, const char *buf, avsize_t nbyte);
+    int       (*readdir) (vfile *vf, struct avdirent *buf);
+    int       (*getattr) (vfile *vf, struct avstat *buf, int attrmask);
+    int       (*setattr) (vfile *vf, struct avstat *buf, int attrmask);
+    int       (*truncate)(vfile *vf, avoff_t length);
+    avoff_t   (*lseek)   (vfile *vf, avoff_t offset, int whence);
+};
+'''
+struct vfs结构体的函数指针通常都有封装函数（通常是以av_开头），当处理来自其它模块的文件时，模块编写者应该使用封装函数而不是查找模块函数的指针。除了ventry管理外，putent，copyent，getpath，lookup等操作可以通过av_copy_ventry，av_free_ventry，av_generate_path，av_get_ventry
+
+==== 垃圾回收 ====
+avfs中的垃圾回收使用的是引用计数机制
+'''
+void      *av_new_obj(avsize_t nbyte, void (*destr)(void *));
+void       av_ref_obj(void *obj);
+void       av_unref_obj(void *obj);
+#define AV_NEW_OBJ(ptr, destr) \
+   ptr = av_new_obj(sizeof(*(ptr)), (void (*)(void *)) destr)
+'''
+
+
+==== 命名空间 ====
+'''
+namespace.h
+struct entry
+struct namespace
+'''
+
+
+struct entry拥有void *data成员，可以通过以下的函数来访问：
+'''
+void av_namespace_set(struct entry *ent, void *data);
+void *av_namespace_get(struct entry *ent);
+'''
+
+查找、解析一个struct entry的方法。
+'''
+struct entry *av_namespace_resolve(struct namespace *ns, const char *path);
+struct entry *av_namespace_lookup(struct namespace *ns, struct entry *parent, const char *name);
+'''
+第一个是解析一个绝对路径，从命名空间的根开始，路径用'/'来分隔。第二个查找指定节点的子节点，如果name为NULL，则会返回parent的父节点。如果不存在，则会创建并将节点返回。返回项是一个对象引用，返还前对象引用计数已经增加1，调用者应该减少计数值。
+
+==== CACHE ====
+'''
+cache.h
+struct cacheobj *av_cacheobj_new(void *obj, const char *name);
+void *av_cacheobj_get(struct cacheobj *cobj);
+void av_cacheobj_setsize(struct cacheobj *cobj, avoff_t diskusage);
+void av_cache_checkspace();
+void av_cache_diskfull();
+'''
+
+High Level API
+
+==== State ====
+
+===== 路径 =====
+
+==== 规范形式 ====
+
+''[basepath]#handler[options][:parameters][/internalpath]''
+
+basepath - 普通的文件路径（普通文件、目录，真实存在或者虚拟）
+# - 处理模块名的前缀
+handler - 处理模块名(filter/remote/archive/state)，只包含下划线与字母数字（[0-9a-zA-Z_]），区分大小写，通常为小写。
+options - 包含挂载选项的可选项。
+	'''
+	+ - read-write
+	= - don't cache
+	'''
+
+parameters - 路径的一部分，在挂载根部前
+internalpath - 操作文件的内部路径，'/'作为其开始。
+'''
+$ ls /home/hequn/.avfs/home/hequn/devel/avfs-0.9.9.tar.bz2#ubz2#utar
+$ ls /home/hequn/.avfs/home/hequn/devel/avfs-0.9.9.tar.bz2#ubz2#utar/avfs-0.9.9
+'''
+
+
+==== 精简形式 ====
+为了方便使用而采用的一种方式。
+    ''dir/file.ext#[/extrapath]''
+处理模块由前面的文件格式来确定。所有的参数均传递给展开后的最后一个处理模块。
+	'''
+	file.gz#             == file.gz#ugz
+	archive.tar.gz#/dir  == archive.tar.gz#ugz#utar/dir
+	archive.tar.gz#+/dir == archive.tar.gz#ugz#utar+/dir
+	$ ls /home/hequn/.avfs/home/hequn/devel/avfs-0.9.9.tar.bz2#/avfs-0.9.9
+	'''
+
+
+==== 模块列表 ====
+  ''name of handler    type of operation      notes''
+''  ---------------    -----------------      -----''
+''  #a                 first floppy drive     alias for #floppy:a''
+''  #avfsstat          meta information       builtin''
+''  #bz2               bzip2                  uses bzip2''
+''  #dav               webdav                 builtin''
+''  #dav_ctl           control dav sessions   ''
+''  #floppy            floppy                 uses mtools (mdir, mcopy, ...)''
+''  #ftp               ftp                    builtin''
+''  #ftp_ctl           control ftp sessions   ''
+''  #gz                gzip                   uses gzip''
+''  #iso9660           CD/DVD filesystem      no need to use mount -t iso9660!''
+''  #local             local filesysem        only for internal use''
+''  #rsh               rsh/rcp                only works if rsh needs no password''
+''  #ssh               ssh/scp                only works if ssh needs no password''
+''  #uar               un-ar                  builtin''
+''  #ubz2              bunzip2                builtin''
+''  #ubzip2            bunzip2                uses bzip2''
+''  #ucftp             ftp                    builtin (write support, no file cache)''
+''  #ucftp_ctl         control ftp sessions   ''
+''  #ugz               gunzip                 builtin (1)''
+''  #ugzip             gunzip                 uses gzip''
+''  #urar              unrar                  builtin list + uses rar to extract''
+''  #utar              untar                  builtin''
+''  #uxz               unxz/unlzma            builtin''
+''  #uxze              unxz/unlzma            uses xz''
+''  #uz                uncompress             uses gzip''
+''  #uzip              unzip                  builtin''
+''  #volatile          'memory fs'            mainly for testing''
+[[FUSE]]
+

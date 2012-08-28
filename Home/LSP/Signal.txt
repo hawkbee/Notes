@@ -1,0 +1,27 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-05-11T10:16:12+08:00
+
+====== Signal ======
+Created Friday 11 May 2012
+
+信号在内核中决定处理的方式：
+1. 忽略 （SIGSTOP,SIGKILL是不能忽略的，系统管理员应该可以终止一个程序的运行。）
+2. 捕获并处理 （SIGSTOP,SIGKILL是不能捕获的）
+3. 执行默认处理
+
+'''
+SIG_IGR
+SIG_DFL
+'''
+'''
+#include <signal.h>
+SIGINT
+SIGSTOP
+SIGKILL
+SIGABRT
+SIGHUP
+
+'''
+kill -l显示系统支持的信号列表。
+
