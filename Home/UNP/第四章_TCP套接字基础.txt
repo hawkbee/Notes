@@ -5,7 +5,7 @@ Creation-Date: 2012-08-28T11:56:12+08:00
 ====== 第四章 TCP套接字基础 ======
 Created Tuesday 28 August 2012
 
-==== 函数 ====
+===== 函数 =====
 ''int socket(int family, int type, int protocol);''
 '''
 AF_INET/AF_INET6/AF_UNIX(PF_)
@@ -33,3 +33,5 @@ IPPROTO_SCTP
 ''int getsockname(int sockfd, struct sockaddr *localaddr, socklen_t *addrlen);''
 
 ''int getpeername(int sockfd, struct sockaddr *peeraddr, socklen_t *addrlen);''
+
+进程会在进程

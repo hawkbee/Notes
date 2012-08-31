@@ -1,0 +1,30 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-08-31T14:26:26+08:00
+
+====== 第七章 socket选项 ======
+Created Friday 31 August 2012
+
+===== 通用选项 =====
+
+	* SO_BROADCAST - 允许发送广播消息，只针对数据报套接字（SOCK_DGRAM），并只在支持广播消息机制的网络中有效（令牌环、以太网）。不支持点对点的网络。不支持面向链接的传输层协议（TCP，SCTP）。必须要设置这个选项才能发送广播数据包。
+	* SO_DEBUG - 只支持TCP，通过环缓存的方式存放收发的包信息，可以通过trpt程序来获取记录的详细信息。
+	* SO_DONTROUTE - 
+	* SO_ERROR - 只读，记录当前套接字出错的状态（pending error）。
+	* SO_KEEPALIVE - TCP链接设置该选项后，如果两个小时没有数据传输（时间长度可以调整，为系统全局，影响所有的套接字），则会向对端发送一个保活探测报文。可能的情况：
+		1. 对端响应ACK，链接正常。
+		2. 对端响应RST，对端重启，套接字出错状态设置为ECONNRESET，然后关闭该套接字。
+		3. 对端无响应，如果没有任何回应，套接字出错状态设置为ETIMEDOUT，然后关闭该套接字。如果套接字收到ICMP错误，则会返回对应的错误，然后关闭该套接字。（如果对端没有响应，在放弃保活探测前会进行重试，Berkeley派生系会重试8次，间隔75秒）
+	 同时也存在保活探测机制错误关闭正常活动链接。如果链路上的路由器宕机15分钟（完全覆盖重试8次的11分15秒时间）。通常在服务端使用，被用来探测客户端是否仍然在线。通常更好的办法是直接通过应用来完成保活探测，拥有更多的灵活性。
+	* SO_LINGER - 基于链接的协议套接字在调用close时的操作。默认情况下，close调用会立即返回，如果存在数据没有发送，系统会将数据发送给对端。可以通过这个选项来改变这种默认的操作。
+		1. 如果l_onoff为0，则使用默认操作。
+		2. 如果l_onoff为1，l_linger为0.调用close时，TCP直接退出链接，丢弃所有的未发送数据并发送RST给对端。
+		3. 如果l_onoff为1，l_linger不为0.则调用close时，如果有数据需要发送则休眠进程直到（1）数据发送完毕并被对端确认，（2）等待时间超时。如果TCP套接字是非阻塞的，将丢弃所有的未发送数据，close马上返回，返回值为EWOULDBLOCK。
+	* SO_OOBINLINE -
+	* SO_RCVBUF, SO_SNDBUF
+	* SO_RCVLOWAT,SO_SNDLOWAT
+	* SO_RCVTIMEO,SO_SNDTIMEO
+	* SO_REUSEADDR,SO_REUSEPORT
+	* SO_TYPE
+	* SO_USE_LOOPBACK
+

@@ -1,0 +1,29 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-08-29T15:46:55+08:00
+
+====== 第六章 IO复用 ======
+Created Wednesday 29 August 2012
+
+===== IO模型 =====
+1. 阻塞型IO
+2. 非阻塞型IO
+3. IO复用（select，poll）
+4. 信号驱动型IO（SIGIO）
+5. 异步IO（POSIX aio_类函数）
+
+输入过程通常包含两个步骤
+1. 等待数据就绪
+2. 拷贝数据
+
+===== select函数 =====
+
+要求内核等待任一事件发生并唤醒进程。
+
+时间事件
+1. 永久等待
+2. 等待指定时间
+3. 不等待
+
+
+
