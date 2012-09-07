@@ -19,11 +19,37 @@ Created Wednesday 29 August 2012
 ===== select函数 =====
 
 要求内核等待任一事件发生并唤醒进程。
+'''
+#include <sys/select.h>
+#include <sys/time.h>
+int select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset, const struct timeval *timeout);
+void FD_ZERO(fd_set *fdset);
+void FD_SET(int fd, fd_set *fdset);
+void FD_CLR(int fd, fd_set *fdset);
+int FD_ISSET(int fd, fd_set *fdset);
+'''
 
 时间事件
-1. 永久等待
-2. 等待指定时间
-3. 不等待
+1. 永久等待（timeout为NULL）
+2. 等待指定时间（通过timeout指定时间）
+3. 不等待（timeout的两个成员均为0）
+
+
+套接字select读就绪
+	1. 套接字接收缓冲区的接收数据大于或者等于接收缓冲下限值（可以通过SO_RCVLOWAT属性来改变，TCP与UDP套接字默认为1）。
+	2. 套接字链接被关闭（TCP链接收到FIN）。读操作将返回0（EOF）。
+	3. 监听套接字上的未完成链接数不是0（有说有未处理的链接？）。
+	4. 套接字出错，读会返回-1并设置errno为相应的错误。（亦可以通过getsockopt的SO_ERROR选项获取错误值）
+
+套接字select写就绪
+	1. 套接字发送缓冲区的空闲值大于或者等于发送缓冲下限值（可以通过SO_SNDLOWAT属性来改变，通常TCP与UDP套接字的默认值为4096）并且满足下列条件之一：
+		a. 套接字链接已经建立；
+		b. 套接字不需要链接（UDP）。
+	2. 套接字链接被关闭，写操作会产生SIGPIPE信号。
+	3. 套接字用非阻塞方式connect已经完成了链接，或者链接失败。
+	4. 套接字出错，写会返回-1并设置errno为相应的错误。（亦可以通过getsockopt的SO_ERROR选项获取错误值）
+套接字select异常
+	1. 套接字拥有带外数据（Out-of-Band data）。
 
 
 
