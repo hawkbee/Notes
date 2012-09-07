@@ -1,0 +1,57 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-09-07T15:43:12+08:00
+
+====== Widgets ======
+Created Friday 07 September 2012
+
+===== Button =====
+
+==== RadionButton ====
+
+第一个RadioButton的创建方式：
+GtkWidget *gtk_radio_button_new(GSList *group);
+GtkWidget *gtk_radio_button_new_with_label(GSList *group, const gchar *label);
+GtkWidget *gtk_radio_button_new_with_mnemonic(GSList *group, const gchar *label);
+
+后续关联创建一个RadioButton组：
+GtkWidget *gtk_radio_button_new_from_widget(GtkRadioButton *group);
+GtkWidget *gtk_radio_button_new_with_label_from_widget(GtkRadioButton *group, const gchar *label);
+GtkWidget *gtk_radio_button_new_with_mnemonic_from_widget(GtkRadioButton *group, const gchar *label);
+
+
+==== GtkEntry ====
+void gtk_entry_set_max_length(GtkEntry *entry, gint max_length);
+void gtk_entry_set_visibility(GtkEntry *entry, gboolean visible);
+void gtk_entry_set_invisible_char(GtkEntry *entry, gunichar invisible);
+void gtk_editable_set_editable(GtkEditable *editable, gboolean is_editable);
+
+void gtk_entry_set_text(GtkEntry *entry, const gchar *text);
+gchar *gtk_entry_get_text(GtkEntry *entry);
+void gtk_editable_insert_text(GtkEditable *editable, const gchar *text, gint length, gint *position);
+position取值为0时完成prepend，取值为-1时完成append。
+void gtk_editable_delete_text(GtkEditable *editable, gint start_pos, gint end_pos);
+void gtk_editable_select_region(GtkEditable *editable, gint start_pos, gint end_pos);
+void gtk_editable_delete_selection(GtkEditable *editable);
+gchar *gtk_editable_get_chars(GtkEditable *editable, gint start_pos, gint end_pos); /* g_free please */
+
+操作剪贴板的函数：
+void gtk_editable_cut_clipboard(GtkEditable *editable);
+void gtk_editable_copy_clipboard(GtkEditable *editable);
+void gtk_editable_paste_clipboard(GtkEditable *editable);
+
+==== Spin Buttons ====
+
+=== GtkAdjustment ===
+GtkObject *gtk_adjustment_new(gdouble initial_value, gdouble lower_range, gdouble upper_range, gdouble step_increment, gdouble page_increment, gdouble page_size);
+
+=== GtkRange ===
+
+GtkWidget *gtk_spin_button_new(GtkAdjustment *adjustment, gdouble climb_rate, guint digits);
+GtkWidget *gtk_spin_button_new_with_range(gdouble minimum_value, gdouble maximum_value, gdouble step_increment);
+void gtk_spin_button_set_value(GtkSpinButton *spin, gdouble value);
+gtk_spin_button_set_digits
+
+
+
+

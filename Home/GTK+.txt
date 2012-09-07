@@ -7,4 +7,6 @@ Created Monday 27 August 2012
 
 [[+Signal]]
 [[+Container]]
+[[+Widgets]]
+
 

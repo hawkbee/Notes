@@ -6,7 +6,8 @@ Creation-Date: 2012-08-27T11:22:38+08:00
 Created Monday 27 August 2012
 
 ''gulong g_signal_connect(gpointer object, const gchar *signal_name, GCallback handler, gpointer data);''
-
+''gulong g_signal_connect_swapped(gpointer object, const gchar *signal_name, GCallback handler, gpointer data);''
+g_signal_connect_swapped功能与g_signal_connect一致，但是会在调用回调函数handler的时候，调换object与data的位置，此时data将作为第一个参数。
 destroy - 在Widget上调用gtk_widget_destroy时GTK+会产生这个信号，delete_event事件的回调函数返回false的时候也会产生这个信号。
 delete_event
 
