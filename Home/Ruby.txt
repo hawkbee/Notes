@@ -1,0 +1,7 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-09-06T16:01:42+08:00
+
+====== Ruby ======
+Created Thursday 06 September 2012
+

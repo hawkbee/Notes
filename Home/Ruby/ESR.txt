@@ -1,0 +1,40 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-09-06T16:02:04+08:00
+
+====== ESR ======
+Created Thursday 06 September 2012
+
+puts "Test."
+puts "Test.".inspect
+
+if elsif else end
+unless
+	array.pop unless array.empty?
+
+each/collect
+
+File
+	open
+	readlines
+	readline
+	seek
+
+Array(可以修改值)
+	size/length
+	-
+	[]/[,]/[..]/[...]
+	delete_at
+	delete
+	slice!
+	empty?
+	<</push
+	pop
+	shift
+	unshift
+	include?
+	...(irb中可用methods查看）
+
+String
+	chomp
+	
