@@ -1,0 +1,16 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-09-13T10:07:27+08:00
+
+====== 第十三章 IO体系结构与设备驱动模型 ======
+Created Thursday 13 September 2012
+
+总线
+桥设备
+
+两条高速总线专注于在存储芯片间数据传输：前端总线（frontside bus）用于连接CPU与RAM控制器，后端总线（backside bus）连接CPU与外部硬件缓存。
+
+IO port
+Interface
+Controller
+

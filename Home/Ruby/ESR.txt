@@ -14,6 +14,11 @@ unless
 
 each/collect
 
+Object
+	respond_to?（检查是否响应指定的方法，未实现时返回false，未定义时调用respond_to_missing?进行检查）
+	respond_to_missing?
+	send/__send__（调用对象方法，与.一样，结合respond_to?使用很方便）
+
 File
 	open
 	readlines

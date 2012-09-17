@@ -1,0 +1,76 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-09-14T14:55:02+08:00
+
+====== NetFilter ======
+Created Friday 14 September 2012
+
+==== NetFilter是什么？ ====
+Framework for packet mangling, outside the normal Berkeley socket inteface. 包含了三个部分。
+1. 协议栈定义了回调点（hooks，well-defined points in a packet's traversal of that protocol stack）。在回调点，协议栈会调用NF框架（指定包与回调调用号，packet and hook number）。
+2. 内核的其它模块可以向NF注册在其中的某个回调点监听某个协议。当数据包传递到NF时，这些监听函数就有机会检查或者修改数据包。
+	a. NF_DROP - 丢弃
+	b. NF_ACCEPT - 通过
+	c. NF_STOLEN - 完全接管这个包
+	d. NF_QUEUE - 通知NF入用户处理队列
+3. 入用户处理队列的包被收集起来发往用户空间（ip_queue driver），这部分包异步进行处理。
+
+==== NetFilter的体系结构 ====
+包经过NF的流程如图所示：
+	   ''--->[1]--->[ROUTE]--->[3]--->[4]--->''
+'''
+                 |            ^
+                 |            |
+                 |         [ROUTE]
+                 v            |
+                [2]          [5]
+                 |            ^
+                 |            |
+                 v            |
+'''
+
+包从左边进入NF，首先经过NF的NF_IP_PRE_ROUTING[1]回调。
+
+然后包到达路由节点[ROUTE]，判断包是发往其它的接口，还是发往本地的进程，如果不能对包进行路由，则路由节点会将包丢弃。
+
+如果目的地是本地进程，则会经过NF的NF_IP_LOCAL_IN[2]回调，然后发往本地进程。
+
+如果目的地是其它的接口，则会经过NF的NF_IP_FORWARD[3]回调，最后经过NF的NF_IP_POST_ROUTING[4]回调，然后包被发送。
+
+本地创建的包首先会经过NF的NF_IP_LOCAL_OUT[5]回调，然后经过路由节点[ROUTE]，最后经过NF的NF_IP_POST_ROUTING[4]回调，然后包被发送。
+
+==== 包选择：IP Tables ====
+建立在NF上，取代ipchains。内核模块可以注册新的表，请求包查（traverse）表。这种包选择方法被用于包过滤（packet filtering，the ‘filter’ table），NAT转换（Net Address Translation，the ‘nat’ table），通用Pre-route packet mangling（the ‘mangle’ table）。向NF注册的回调函数（根据它们在每一个回调点的钓鱼顺序）：
+   ''     --->PRE------>[ROUTE]--->FWD---------->POST------>''
+''       Conntrack    |       Mangle   ^    Mangle''
+''       Mangle       |       Filter   |    NAT (Src)''
+''       NAT (Dst)    |                |    Conntrack''
+''       (QDisc)      |             [ROUTE]''
+''                    v                |''
+''                    IN Filter       OUT Conntrack''
+''                    |  Conntrack     ^  Mangle''
+''                    |  Mangle        |  NAT (Dst)''
+''                    v                |  Filter''
+
+=== 包过滤 ===
+filter表不应该修改包，只开展过滤工作。
+
+iptables优于ipchains的一点就是iptables体量小、速度快。向NF的NF_IP_LOCAL_IN，NF_IP_FORWARD，NF_IP_LOCAL_OUT三点注册监听函数。也就是说，对任意一个数据包，只有一个点对其进行过滤。
+
+=== NAT ===
+对于非本地的包（？），NF_IP_PRE_ROUTING回调用于修改目的地地址修改，NF_IP_POST_ROUTING回调用于本地地址修改。
+
+当CONFIG_IP_NF_NAT_LOCAL定义后，NF_IP_LOCAL_OUT、NF_IP_LOCAL_IN回调用于目的地地址修改。
+
+与filter表不同，只在一个链接的第一个包会去查表，查表的结果会应用到该链接之后收发包。
+
+NAT有源地址NAT（第一个包的源地址被修改）、目的地址NAT（第一个包的目的地地址被修改）。Masquerading是源地址NAT的一种特殊形式，Port forwarding、transparent Proxying则是目的地址NAT的特殊形式。均可以通过NAT模块完美实现。
+
+=== Mangling ===
+mangle表可以用于修改包。
+
+=== Connect tracking ===
+是NAT的基础，但是实现成独立的模块，state模块
+
+
+http://www.netfilter.org/documentation/HOWTO//netfilter-hacking-HOWTO.html

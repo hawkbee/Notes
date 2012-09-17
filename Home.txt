@@ -5,6 +5,104 @@ Creation-Date: 2012-05-10T13:44:08+08:00
 ====== Home ======
 Created Thursday 10 May 2012
 
-===== Linux version control! =====
+=== pacman ===
 
-2012-05-12
+删除没有依赖的包
+pacman -Rs $(pacman -Qdtq)
+
+
+=== 服务管理程序 ===
+Debian
+insserv
+update-rc.d
+invoke-rc.d
+添加启动脚本：
+update-rc.d foo defaults
+update-rc.d foo start 20 2 3 4 5 . stop 20 0 1 6 .
+删除启动脚本：
+update-rc.d -f foo remove
+
+
+Fedora/Redhat/CentOS
+chkconfig
+service
+
+ArchLinux
+systemctl
+
+=== 系统启动默认级别 ===
+/etc/inittab
+id:3:initdefault:
+
+# 0 - 停机（千万不要把initdefault设置为0 ）
+# 1 - 单用户模式
+# 2 - 多用户，但是没有NFS
+# 3 - 完全多用户模式
+# 4 - 没有用到
+# 5 - X11
+# 6 - 重新启动（千万不要把initdefault设置为6 ） 
+
+Debian启动属性
+1. Debian的默认运行级别是2.
+2. Debian并不会在/etc/inittab文件中中配置X Window系统显示管理器。
+3. 运行级别2与3是相同的，而运行级别4与5是相同的。
+4. 运行级别4与5只会运行一个虚拟终端，而运行级别2与3却会运行6个。
+
+Debian默认是启动gdm，更改inittab是没有效果的，如果想启动到命令行，可以取消gdm或者kdm。
+update-rc.d -f gdm remove
+update-rc.d gdm start 5 . stop 0 1 2 3 4 6 .
+
+=== sysvinit ===
+/etc/inittab
+
+=== systemd ===
+配置路径
+# pkg-config systemd --variable=systemdsystemunitdir
+/usr/lib/systemd/system
+# pkg-config systemd --variable=systemduserunitdir
+/usr/lib/systemd/user
+
+默认启动default.target
+# man systemd.special
+
+
+=== agetty ===
+
+==== udev ====
+
+/dev下保存着设备文件，访问设备的中间介质，通过mknod命令来创建。在蛮荒时代，是通过手动维护，需要为每一个支持的设备创建足够多的设备文件，导致/dev下的文件繁多，占用空间巨大。文艺复兴时代，为了解决这个问题，引入了devfs文件系统，这个文件系统动态维护/dev下的设备文件，工作在内核中。新时代，使用udev，udev工作在用户态，监听系统设备状态的变化。
+
+静态创建与devfs的不足：
+1. 不确定的设备映射：设备文件到实际设备的映射不可靠、不确定。（两台USB打印机区分），应该可以采用设备的序列号或者其它标识信息来唯一识别。
+2. 没有足够的主/次设备号。
+3. 设备文件太多，静态创建时会出现。
+4. 命名不够灵活，devfs的命令机制。
+5. 耗费大量的内核内存，devfs工作在内核中。
+
+查看硬盘的UUID
+# blkid
+# ls /dev/disk/by-uuid -l
+
+修改硬盘的UUID
+ext2/3/4 tune2fs -U (clear | random | time)
+reiserfs - reiserfstune
+jfs - jfs_tune
+xfs - xfs_tune
+
+uuidgen | xargs tune2fs /dev/sda5 -U
+tune2fs -U c1b9d5a2-f162-11cf-9ece-0020afc76f16 /dev/sda5
+
+
+devpts
+向访问伪终端提供接口的文件系统。
+
+devfs （2.3.46 - 2.6.13）
+内核态的设备文件系统，可以动态的创建/dev目录下的设备文件
+
+udev
+用户态的守护进程，监听内核的设备更改事件。
+
+配置文件/etc/udev/udev.conf、/etc/udev/rules.d/
+
+目前，udev已经合并进systemd，作为一个包发布了。
+
