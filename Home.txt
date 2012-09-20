@@ -106,3 +106,25 @@ udev
 
 目前，udev已经合并进systemd，作为一个包发布了。
 
+==== svn ====
+分支合并
+为了在分支完成时将分支合并到主干上不会产生太多的冲突，可以在分支开发过程中，不断将针对主干的修改合并到分支中。
+
+svn copy
+
+
+'''
+svn merge
+usage: 1. merge SOURCE[@REV] [TARGET_WCPATH]
+          (the 'sync' merge)
+       2. merge [-c M[,N...] | -r N:M ...] SOURCE[@REV] [TARGET_WCPATH]
+          (the 'cherry-pick' merge)
+       3. merge --reintegrate SOURCE[@REV] [TARGET_WCPATH]
+          (the 'reintegrate' merge)
+       4. merge SOURCE1[@N] SOURCE2[@M] [TARGET_WCPATH]
+          (the '2-URL' merge)
+'''
+
+第一种合并是用于向上同步的合并，可以用于与主干的同步。在分支目录，可以执行''svn merge ^/trunk''执行合并。
+第三种合并是再集成合并，可以用于在分支功能完成后集成到主干的合并。在主干目录，可以执行''svn merge --reintegrate ^/feature''执行合并。
+
