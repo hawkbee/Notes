@@ -128,3 +128,18 @@ usage: 1. merge SOURCE[@REV] [TARGET_WCPATH]
 第一种合并是用于向上同步的合并，可以用于与主干的同步。在分支目录，可以执行''svn merge ^/trunk''执行合并。
 第三种合并是再集成合并，可以用于在分支功能完成后集成到主干的合并。在主干目录，可以执行''svn merge --reintegrate ^/feature''执行合并。
 
+==== /etc/shadow ====
+'''
+openssl passwd -1 -salt $(< /dev/urandom tr -dc '[:alnum:]' | head -c 32)
+echo "xansun" | openssl passwd -1 -salt $(< /dev/urandom tr -dc '[:alnum:]' | head -c 32) -stdin
+'''
+ 
+
+==== diff && patch ====
+'''
+diff -Nur base modify > patch.diff   //生成补丁
+patch -p1 < patch.diff    //应用补丁
+patch -R -p1 < patch.diff //取消补丁复原
+'''
+
+
