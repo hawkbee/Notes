@@ -1,0 +1,50 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-09-24T14:46:17+08:00
+
+====== FDT ======
+Created Monday 24 September 2012
+
+Flattened Device Tree
+
+由节点和属性组成。属性由键值对组成，节点包括子节点和属性。譬如：
+'''
+/ {
+    node1 {
+        a-string-property = "A string";
+        a-string-list-property = "first string", "second string";
+        a-byte-data-property = [0x01 0x23 0x34 0x56];
+        child-node1 {
+            first-child-property;
+            second-child-property = <1>;
+            a-string-property = "Hello, world";
+        };
+        child-node2 {
+        };
+    };
+    node2 {
+        an-empty-property;
+        a-cell-property = <1 2 3 4>; /* each number (cell) is a uint32 */
+        child-node1 {
+        };
+    };
+};
+'''
+
+可以看出，属性如下：
+1. 包含一个根节点。
+2. 包含一系列子节点（node1，node2）。
+3. 子节点又包含子节点（node1包含child-node1，child-node2）。
+4. 一系列分布在树中的属性。
+
+属性由键值对构成，值可以是空或者包含任何的字节流。数据类型没有编码进数据结构中，有以下几种基本数据表示类型可以通过设备树源文件表示。
+1. 字符串用双引号括起来（"test"）。
+2. 32位无符号整数（Cells），通过尖括号括起来（<0xbeef 123 0xabcd1234>）。
+3. 二进制数据用方括号括起来（[0x01 0x23 0x45 0x67]）。
+4. 逗号可以连接不同的数据类型（"a string", [0x01 0x23 0x45 0x67], <0x12345678>;）。
+5. 逗号也可以创建字符串数组（"red fish", "blue fish";）
+
+
+ePAPR: https://www.power.org/documentation/epapr-version-1-1/
+
+http://devicetree.org/Device_Tree_Usage
