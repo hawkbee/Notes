@@ -17,7 +17,7 @@ Framework for packet mangling, outside the normal Berkeley socket inteface. 包�
 
 ==== NetFilter的体系结构 ====
 包经过NF的流程如图所示：
-	   ''--->[1]--->[ROUTE]--->[3]--->[4]--->''
+	     ''--->[1]--->[ROUTE]--->[3]--->[4]--->''
 '''
                  |            ^
                  |            |

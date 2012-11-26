@@ -1,0 +1,16 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-10-16T11:11:07+08:00
+
+====== zentaopms ======
+Created Tuesday 16 October 2012
+
+1. 创建产品
+2. 提出需求
+3. 创建计划
+
+1. 创建项目
+2. 关联产品
+3. 组建团队
+4. 分解需求、创建任务
+5. 工时管理

@@ -140,6 +140,35 @@ echo "xansun" | openssl passwd -1 -salt $(< /dev/urandom tr -dc '[:alnum:]' | he
 diff -Nur base modify > patch.diff   //生成补丁
 patch -p1 < patch.diff    //应用补丁
 patch -R -p1 < patch.diff //取消补丁复原
+
+HTC G8 106.8x60.4x12mm
 '''
+Huawei Ascend D1 12.9 x 6.4 x 0.9 cm
+
+
+
+构建busybox
+
+make O=/path/to/build/ defconfig
+cd /path/to/build
+
+make menuconfig
+  # select Busybox Settings
+  #   then General Configuration
+  #     then exec prefers applets
+  #   exit back to top level menu
+  #   select Shells
+  #     then Standalone shell
+  #   exit back to top level menu
+  # exit and save new configuration
+make
+make CONFIG_PREFIX=/path/to/rootfs install
+
+
+
+
+
+
+
 
 

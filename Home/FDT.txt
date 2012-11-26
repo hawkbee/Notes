@@ -44,6 +44,8 @@ Flattened Device Tree
 4. 逗号可以连接不同的数据类型（"a string", [0x01 0x23 0x45 0x67], <0x12345678>;）。
 5. 逗号也可以创建字符串数组（"red fish", "blue fish";）
 
+int fdt_path_offset(const void *fdt, const char *path);
+ const void *fdt_getprop(const void *fdt, int nodeoffset, const char *name, int *lenp);
 
 ePAPR: https://www.power.org/documentation/epapr-version-1-1/
 
