@@ -39,6 +39,23 @@ Framework for packet mangling, outside the normal Berkeley socket inteface. 包�
 
 本地创建的包首先会经过NF的NF_IP_LOCAL_OUT[5]回调，然后经过路由节点[ROUTE]，最后经过NF的NF_IP_POST_ROUTING[4]回调，然后包被发送。
 
+HOOK | FUNCTION | FILE
+NF_IP_PRE_ROUTING | ip_rcv | ip_input.c
+NF_IP_LOCAL_IN | ip_local_deliver | ip_input.c
+NF_IP_FORWARD | ip_forward | ip_forward.c
+NF_IP_FORWARD | ipmr_queue_xmit | ipmr.c
+NF_IP_LOCAL_OUT | ip_build_and_send_pkt | ip_output.c
+NF_IP_LOCAL_OUT | ip_queue_xmit | ip_output.c
+NF_IP_LOCAL_OUT | ip_build_xmit_slow | ip_output.c
+NF_IP_LOCAL_OUT | ip_build_xmit | ip_output.c
+NF_IP_LOCAL_OUT | send_reset | ipt_REJECT.c
+NF_IP_LOCAL_OUT | send_unreach | ipt_REJECT.c
+NF_IP_LOCAL_OUT | igmpv3_sendpack | igmp.c
+NF_IP_LOCAL_OUT | igmp_send_report | igmp.c
+NF_IP_POST_ROUTING | __ip_finish_output | ip_output.c
+NF_IP_POST_ROUTING | ip_mc_output | ip_output.c
+
+
 ==== 包选择：IP Tables ====
 建立在NF上，取代ipchains。内核模块可以注册新的表，请求包查（traverse）表。这种包选择方法被用于包过滤（packet filtering，the ‘filter’ table），NAT转换（Net Address Translation，the ‘nat’ table），通用Pre-route packet mangling（the ‘mangle’ table）。向NF注册的回调函数（根据它们在每一个回调点的钓鱼顺序）：
    ''     --->PRE------>[ROUTE]--->FWD---------->POST------>''
