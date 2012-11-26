@@ -1,0 +1,22 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-11-26T10:48:27+08:00
+
+====== The definitive guide to the xen hypervisor ======
+Created Monday 26 November 2012
+
+====== xen虚拟机 ======
+
+===== 虚拟化的现状 =====
+
+==== 什么是虚拟化（Virtualization） ====
+概念上与仿真（emulation）非常相似。仿真是模仿成其它系统运行，而虚拟化则是模仿成多个相同的系统。
+现代操作系统就是简化的虚拟机。
+
+==== 为什么要虚拟化 ====
+
+==== x86虚拟机 ====
+
+IBM S/360
+
+===== xen虚拟机的体系结构 =====
