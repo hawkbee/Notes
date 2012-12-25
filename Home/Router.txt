@@ -1,0 +1,29 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2012-11-26T11:26:26+08:00
+
+====== Router ======
+Created Monday 26 November 2012
+
+linux发行版
+
+DD-WRT
+OPEN-WRT
+zeroshell
+routeros
+untangle
+endian
+clearos
+vyatta
+基于Debian发布，可在x86上运行。社区免费，web组件收费。
+http://www.vyatta.org
+http://www.vyatta.com
+
+消费级芯片
+
+BCM
+Atheros
+Ralink
+
+
+

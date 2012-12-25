@@ -99,12 +99,15 @@ devpts
 devfs （2.3.46 - 2.6.13）
 内核态的设备文件系统，可以动态的创建/dev目录下的设备文件
 
-udev
+udevd
 用户态的守护进程，监听内核的设备更改事件。
 
 配置文件/etc/udev/udev.conf、/etc/udev/rules.d/
 
 目前，udev已经合并进systemd，作为一个包发布了。
+
+mdev
+
 
 ==== svn ====
 分支合并
@@ -163,6 +166,16 @@ make menuconfig
   # exit and save new configuration
 make
 make CONFIG_PREFIX=/path/to/rootfs install
+
+
+
+syslogd
+rsyslog
+syslog-ng
+
+journal
+
+klogd
 
 
 

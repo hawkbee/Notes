@@ -9,11 +9,24 @@ Created Friday 14 September 2012
 Framework for packet mangling, outside the normal Berkeley socket inteface. 包含了三个部分。
 1. 协议栈定义了回调点（hooks，well-defined points in a packet's traversal of that protocol stack）。在回调点，协议栈会调用NF框架（指定包与回调调用号，packet and hook number）。
 2. 内核的其它模块可以向NF注册在其中的某个回调点监听某个协议。当数据包传递到NF时，这些监听函数就有机会检查或者修改数据包。
-	a. NF_DROP - 丢弃
-	b. NF_ACCEPT - 通过
-	c. NF_STOLEN - 完全接管这个包
-	d. NF_QUEUE - 通知NF入用户处理队列
-3. 入用户处理队列的包被收集起来发往用户空间（ip_queue driver），这部分包异步进行处理。
+
+回调函数点
+HOOK				调用时机
+NF_IP_PRE_ROUTING	完整性校验后、选路前
+NF_IP_LOCAL_IN		选路后、数据包目的是本地主机
+NF_IP_FORWARD		选路后、数据包目的是其它主机
+NF_IP_LOCAL_OUT		本地数据包离开本地主机时
+NF_IP_POST_ROUTING	数据包离开本地主机
+
+HOOK函数返回值
+NF_DROP		丢弃该数据包
+NF_ACCEPT	保留该数据包
+NF_STOLEN	忘掉该数据包
+NF_QUEUE	通知NF入用户处理队列
+NF_REPEAT	再次调用该HOOK函数
+
+4. 入用户处理队列的包被收集起来发往用户空间（ip_queue driver），这部分包异步进行处理。
+
 
 ==== NetFilter的体系结构 ====
 包经过NF的流程如图所示：
@@ -28,7 +41,6 @@ Framework for packet mangling, outside the normal Berkeley socket inteface. 包�
                  |            |
                  v            |
 '''
-
 包从左边进入NF，首先经过NF的NF_IP_PRE_ROUTING[1]回调。
 
 然后包到达路由节点[ROUTE]，判断包是发往其它的接口，还是发往本地的进程，如果不能对包进行路由，则路由节点会将包丢弃。
