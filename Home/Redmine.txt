@@ -1,0 +1,14 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2013-01-05T16:20:17+08:00
+
+====== Redmine ======
+Created Saturday 05 January 2013
+
+1. tar czf redmine.tgz --exclude-vcs redmine/
+2. gem install bundle
+Gem::Exception: Cannot load gem at [/usr/lib/ruby/gems/1.9.1/cache/rake-10.0.3.gem] in /home/hawkbee/redmine
+An error occurred while installing rake (10.0.3), and Bundler cannot continue.
+Make sure that `gem install rake -v '10.0.3'` succeeds before bundling.
+3. bundle install --path=~/.gem --without development test rmagick postgresql
+4. ruby script/rails server webrick -e production
