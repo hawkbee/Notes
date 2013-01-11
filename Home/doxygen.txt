@@ -1,0 +1,35 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2013-01-11T17:12:22+08:00
+
+====== doxygen ======
+Created Friday 11 January 2013
+
+'''
+/**
+ * @file ds.h
+ * @addtogroup ds Data storage
+ * @{
+ */
+/**
+ * @brief 打开、新建文件。
+ *
+ * 打开一个已经存在的文件，如果文件不存在，并且oflag参数中指定了O_CREAT选项，则会
+ * 新建一个文件，此时文件的权限属性由第三个参数指定。
+ * @param[in] path 文件路径
+ * @param[in] oflag : 属性
+ * @retval 文件句柄 操作成功
+ * @retval -1 - 操作失败
+ * @note
+ * 	操作失败时errno记录具体的错误值。
+ * @see ds_read ds_write
+ * @remarks remark text
+ * @deprecated reason
+ * @since time or revision
+ * @code
+ * 	ds_open("/ram/bridge/2012/jan/1.db", O_CREAT | O_RDWR);
+ * @endcode
+ */
+int ds_open(const char *path, int oflag, ...);
+/* @} */
+'''
