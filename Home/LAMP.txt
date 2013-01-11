@@ -1,0 +1,12 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2013-01-05T16:25:59+08:00
+
+====== LAMP ======
+Created Saturday 05 January 2013
+
+1. pacman -S apache php php-apache mysql
+
+grep http /etc/passwd
+
+useradd -d /srv/http -r -s /bin/false -U http
