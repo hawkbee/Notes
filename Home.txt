@@ -10,6 +10,14 @@ Created Thursday 10 May 2012
 删除没有依赖的包
 pacman -Rs $(pacman -Qdtq)
 
+安装pandoc
+/etc/pacan.conf
+在extra节前添加
+[haskell-core]
+SigLevel = Optional TrustAll
+Server = http://www.kiwilight.com/haskell/core/$arch
+
+pacman -S haskell-pandoc
 
 === 服务管理程序 ===
 Debian
@@ -152,6 +160,7 @@ Huawei Ascend D1 12.9 x 6.4 x 0.9 cm
 
 构建busybox
 
+'''
 make O=/path/to/build/ defconfig
 cd /path/to/build
 
@@ -166,6 +175,8 @@ make menuconfig
   # exit and save new configuration
 make
 make CONFIG_PREFIX=/path/to/rootfs install
+'''
+
 
 
 
@@ -182,6 +193,8 @@ klogd
 
 
 
-
+orders of magnitude - 数量级？成倍的
+RAM as fast as current CPU cores is **orders of magnitude** more expensive than any dynamic RAM.
+Accessing hard disks is **orders of magnitude** slower than even DRAM access.
 
 
