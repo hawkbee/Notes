@@ -1,0 +1,106 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2013-02-17T12:52:50+08:00
+
+====== 网络 ======
+Created Sunday 17 February 2013
+
+路由器
+三层交换与路由器区别
+
+路由表区别
+交换机的路由表大约几千条，通常为主机路由，通过哈希算法做精确匹配，另有少量的网段路由，做最佳匹配。
+路由器的路由表包含了所有的可用路由，做最佳匹配。
+
+
+交换机路由表维护
+交换机的芯片路由表是一个CACHE，上层软件产生路由时不加人芯片路由表，芯片处理报文时，如果没有找到路由，产生一个CACHE miss，然后由软件查找路由表，得到一个主机路由，加入芯片路由表，芯片就根据这个路由表做高速转发。
+
+交换机的路由表容量小，主要是主机路由，在主机地址更换太多的时候，会产生‘CACHE颠簸’。主要应用于中小型网络，单一出口的网络。
+
+
+
+
+
+三层交换
+VLAN间的通信需要路由器来完成，路由器与交换机之间的路径有可能成为性能的瓶颈。（单臂路由）
+三层转发过程中要重新封装二层。
+
+三层交换 = 二层交换 + 三层转发
+
+MLS (MultiLayer Switching)一次路由，多次交换
+	三层引擎处理数据流的第一个包，交换从三层引擎中获取二层重写信息，在硬件中创建一个MLS条目，负责重写与转发数据流中的后续数据包。
+CEF 基于拓扑的转发模型
+	FIB 转发信息库，基于IP目标前缀的转发决策（与路由表对应，路由表选优的结果）
+	邻接关系表 二层编址信息
+
+集中式交换
+	在一个专用的芯片上做出转发决策。
+分布式交换
+	每个芯片上都能做出转发决策。
+
+配置
+1. 单臂路由
+R(config)#interface fastEthernet 0/0
+R(config-if)#no shutdown
+R(config-if)#exit
+
+R(config)#interface fastEthernet 0/0.1
+R(config-subif)#encapsulation dot1q 1
+R(config-subif)#ip address 10.1.1.1 255.0.0.0
+R(config-subif)#exit
+
+R(config)#interface fastEthernet 0/0.2
+R(config-subif)#encapsulation dot1q 2
+R(config-subif)#ip address 20.1.1.1 255.0.0.0
+R(config-subif)#exit
+
+2. 三层交换使能
+S(config)#ip routing
+
+3. 配置VLAN的IP地址
+S(config)#interface vlan vlan-id
+S(config-if)#ip address //ip-address subnet-mask//
+S(config-if)#no shutdown
+
+4. 查看FIB表
+S(config)#show ip cef
+S(config)#show ip route
+
+5. 查看邻接表
+S(config)#show adjacency detail
+
+6. 配置路由接口
+S(config)#interface f0/23
+S(config-if)#no switchport
+S(config-if)#ip address 10.1.1.1 255.255.255.252
+S(config)#ip route 0.0.0.0 0.0.0.0 10.1.1.2
+
+7. DHCP中继转发
+S(config-if)#ip helper-address //dhcpserver-address//
+
+8. 二层交换上配置VLAN
+S-2(config)#vlan 2
+S-2(config-vlan)#vlan 3
+S-2(config-vlan)#exit
+
+S-2(config)#interface range f0/11-15
+S-2(config-if-range)#switchport access vlan 2
+S-2(config-if-range)#switchport mode access
+
+S-2(config)#interface range f0/16-23
+S-2(config-if-range)#switchport access vlan 3
+S-2(config-if-range)#switchport mode access
+
+9. 二层交换机上配置trunk口
+S-2(config)#interface f0/24
+S-2(config-if)#switchport mode trunk
+
+（三层交换机上配置与二层交换机相同的VLAN）
+
+
+
+
+
+
+
