@@ -188,7 +188,8 @@ journal
 
 klogd
 
-
+indent
+-kr -nut -l100 -nfca -ncdb -npsl -nbc -di8
 
 
 

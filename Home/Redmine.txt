@@ -12,3 +12,10 @@ An error occurred while installing rake (10.0.3), and Bundler cannot continue.
 Make sure that `gem install rake -v '10.0.3'` succeeds before bundling.
 3. bundle install --path=~/.gem --without development test rmagick postgresql
 4. ruby script/rails server webrick -e production
+
+
+配置好git仓库地址后，提取git提交记录
+cd redmine
+ruby script/runner "Repository.fetch_changesets" -e production
+
+git的hook钩子post-receive中添加上述代码即可。
