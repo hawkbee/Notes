@@ -1,0 +1,27 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2013-01-18T11:34:52+08:00
+
+====== vsftpd ======
+Created Friday 18 January 2013
+
+grep ftp /etc/passwd锁定ftp账户的主目录
+ftp:x:14:11:ftp:/srv/ftp:/bin/false
+
+anonymous对应的账户就是ftp
+
+500 OOPS: vsftpd: refusing to run with writable root inside chroot()
+
+/srv/ftp目录带有写权限、删除对应的写权限即可。
+
+STOR: 553 Could not create file
+没有写权限
+在/srv/ftp下建目录pub，并为其添加写权限。
+
+ftpput HOST pub/r_filename l_filename
+
+anonymous_enable=YES
+write_enable=YES
+anon_upload_enable=YES
+anon_umask=022
+
