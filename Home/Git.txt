@@ -1,0 +1,16 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2013-04-22T17:13:58+08:00
+
+====== Git ======
+Created Monday 22 April 2013
+
+删除远程分支
+
+git push origin :<branch>
+git push origin --delete <branch>
+
+删除远程TAG
+
+git push origin :refs/tags/<tag>
+git push origin --delete tag <tag>

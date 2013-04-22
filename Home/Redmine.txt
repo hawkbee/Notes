@@ -10,12 +10,57 @@ Created Saturday 05 January 2013
 Gem::Exception: Cannot load gem at [/usr/lib/ruby/gems/1.9.1/cache/rake-10.0.3.gem] in /home/hawkbee/redmine
 An error occurred while installing rake (10.0.3), and Bundler cannot continue.
 Make sure that `gem install rake -v '10.0.3'` succeeds before bundling.
-3. bundle install --path=~/.gem --without development test rmagick postgresql
+3. bundle install --path=~/.gem --without development test postgresql rmagick
 4. ruby script/rails server webrick -e production
 
+安装插件
+rake db:migrate_plugins RAILS_ENV=production
 
 配置好git仓库地址后，提取git提交记录
 cd redmine
 ruby script/runner "Repository.fetch_changesets" -e production
 
 git的hook钩子post-receive中添加上述代码即可。
+
+
+redmine集成到apache中
+
+安装mod_fcgid
+
+安装passenger
+gem install passenger
+
+passenger-install-apache2-module
+
+--------------------------------------------
+The Apache 2 module was successfully installed.
+
+Please edit your Apache configuration file, and add these lines:
+
+   LoadModule passenger_module /home/hawkbee/.gem/ruby/1.9.1/gems/passenger-3.0.19/ext/apache2/mod_passenger.so
+   PassengerRoot /home/hawkbee/.gem/ruby/1.9.1/gems/passenger-3.0.19
+   PassengerRuby /usr/bin/ruby
+
+RailsEnv production$
+RailsBaseURI /redmine$
+<directory "/srv/http/redmine">$
+>-------Options Indexes MultiViews FollowSymLinks ExecCGI$
+>-------Order allow,deny$
+>-------Allow from all$
+>-------AllowOverride all$
+</directory>$
+
+ln -s /redmine/public /srv/http/redmine
+mv dispatch.fcgi.example dispatch.fcgi
+mv htaccess.fcgi.example .htaccess
+
+config/environment.rb
+ENV['RAILS_ENV'] ||= 'production' 
+
+
+
+rake redmine:plugins:migrate NAME=redmine_knowledgebase RAILS_ENV=production
+
+卸载
+rake redmine:plugins:migrate NAME=redmine_knowledgebase VERSION=0 RAILS_ENV=production
+rake redmine:plugins:migrate NAME=redmine_backlogs VERSION=0 RAILS_ENV=production

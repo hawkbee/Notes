@@ -199,3 +199,7 @@ RAM as fast as current CPU cores is **orders of magnitude** more expensive than 
 Accessing hard disks is **orders of magnitude** slower than even DRAM access.
 
 
+
+INLINE(type) -> INLINE type
+sed -i 's/\(INLINE(\)\([^\)]*\))\(.*$\)/INLINE \2\3/g' `grep INLINE -rl include/`
+
